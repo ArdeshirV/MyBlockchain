@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"time"
 )
 
 func main() {
@@ -30,3 +31,26 @@ func CalculateHash(block Block) string {
   hashed := h.Sum(nil)
   return hex.EncodeToString(hashed)
 }
+
+func GenerateBlock(prevHash Block, data string) Block {
+  var block Block
+  block.Index = prevHash.Index + 1
+  block.TimeStamp = time.Now().String()
+  block.Data = data
+  block.PrevHash = prevHash.Hash
+  block.Hash = CalculateHash(block)
+  return block
+}
+
+func (bc *Blockchain) AddBlock(data string) {
+  prevBlock := bc.Chain[len(bc.Chain)-1]
+  newBlock := GenerateBlock(prevBlock, data)
+  bc.Chain = append(bc.Chain, newBlock)
+}
+
+func NewBlockchain() *Blockchain {
+  genesisBlock := Block{0, time.Now().String(), "Genesis Block", "", ""}
+  genesisBlock.Hash = CalculateHash(genesisBlock)
+  return &Blockchain{[]Block{genesisBlock}}
+}
+
