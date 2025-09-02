@@ -67,3 +67,18 @@ func SaveBlockchain(bc Blockchain) error {
   }
   return nil
 }
+
+func LoadBlockchain() (Blockchain, error) {
+  data, err := os.ReadFile("blockchain.json")
+  if err != nil {
+    return Blockchain{}, err
+  }
+  var bc Blockchain
+  err = json.Unmarshal(data, &bc)
+  if err != nil {
+    return Blockchain{}, err
+  }
+  return bc, nil
+}
+
+
