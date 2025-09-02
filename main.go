@@ -3,7 +3,9 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -54,3 +56,14 @@ func NewBlockchain() *Blockchain {
   return &Blockchain{[]Block{genesisBlock}}
 }
 
+func SaveBlockchain(bc Blockchain) error {
+  data, err := json.Marshal(bc)
+  if err != nil {
+    return err
+  }
+  err = os.WriteFile("blockchain.json", data, 0644)
+  if err != nil {
+    return err
+  }
+  return nil
+}
