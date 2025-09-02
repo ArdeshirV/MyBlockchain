@@ -5,12 +5,57 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"strings"
 	"time"
 )
 
 func main() {
 	fmt.Println(Prompt("My Blockchain"))
+  var bc Blockchain
+  _, err := os.Stat("blockchain.json")
+  if err != nil && os.IsNotExist(err) {
+    bc = *NewBlockchain()
+    err := SaveBlockchain(bc)
+    if err != nil {
+      log.Fatal(err)
+    }
+  } else {
+    bc, err = LoadBlockchain()
+    if err != nil {
+      log.Fatal(err)
+    }
+  }
+
+  if os.IsNotExist(err) {
+    bc.AddBlock("Block 1 Data")
+    err = SaveBlockchain(bc)
+    if err != nil {
+      log.Fatal(err)
+    }
+
+    bc.AddBlock("Block 2 Data")
+    err = SaveBlockchain(bc)
+    if err != nil {
+      log.Fatal(err)
+    }
+
+    bc.AddBlock("Block 3 Data")
+    err = SaveBlockchain(bc)
+    if err != nil {
+      log.Fatal(err)
+    }
+  }
+
+  for _, block := range bc.Chain {
+    fmt.Printf("Index: %d\n", block.Index)
+    fmt.Printf("Timestamp: %s\n", block.TimeStamp)
+    fmt.Printf("Data: %s\n", block.Data)
+    fmt.Printf("Hash: %s\n", block.Hash)
+    fmt.Printf("Previous Hash: %s\n", block.PrevHash)
+    fmt.Println(strings.Repeat("-", 40))
+  }
 }
 
 type Block struct {
